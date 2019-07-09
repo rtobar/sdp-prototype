@@ -2,6 +2,11 @@
 # ms/CMakeLists.txt
 #
 cmake_minimum_required(VERSION 2.8)
+
+list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake/modules)
+
+find_package(CasaCore REQUIRED)
+
 if (CASACORE_FOUND)
 
     set(OSKAR_LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
