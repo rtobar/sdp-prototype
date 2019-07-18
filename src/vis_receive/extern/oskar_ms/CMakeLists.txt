@@ -23,18 +23,17 @@ if (CASACORE_FOUND)
     )
 
     # Build and install the oskar_ms library.
-    add_library(oskar_ms ${ms_SRC})
+    add_library(oskar_ms SHARED ${ms_SRC})
     include_directories(
 			${CASACORE_INCLUDE_DIR}
 	    ${CASACORE_INCLUDE_DIR}/casacore
       ${PROJECT_SOURCE_DIR}
 		)
     set_target_properties(oskar_ms PROPERTIES
+        SOVERSION ${OSKAR_VERSION}
+        VERSION ${OSKAR_VERSION}
         COMPILE_FLAGS "-Wno-cast-qual -fvisibility=default")
     target_link_libraries(oskar_ms ${CASACORE_LIBRARIES})
-    set_target_properties(oskar_ms PROPERTIES
-        SOVERSION ${OSKAR_VERSION}
-        VERSION ${OSKAR_VERSION})
     install(TARGETS oskar_ms
         ARCHIVE DESTINATION ${OSKAR_LIB_INSTALL_DIR} COMPONENT libraries
         LIBRARY DESTINATION ${OSKAR_LIB_INSTALL_DIR} COMPONENT libraries
@@ -42,6 +41,7 @@ if (CASACORE_FOUND)
     )
 
     # ==== Recurse into test subdirectory.
+		#add_subdirectory(../gtest)
 		if (GTEST_INCLUDE_DIR)
 			add_subdirectory(test)
 		endif(GTEST_INCLUDE_DIR)
