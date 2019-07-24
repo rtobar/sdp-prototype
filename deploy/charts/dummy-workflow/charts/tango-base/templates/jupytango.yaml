@@ -1,0 +1,57 @@
+{{ if .Values.jupytango.enabled }}
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jupytango-{{ template "tango-base.name" . }}-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: jupytango-{{ template "tango-base.name" . }}-{{ .Release.Name }}
+    chart: {{ template "tango-base.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  containers:
+  - name: jupytango
+    image: "{{ .Values.jupytango.image.registry }}/{{ .Values.jupytango.image.image }}:{{ .Values.jupytango.image.tag }}"
+    imagePullPolicy: {{ .Values.jupytango.image.pullPolicy }}
+    env:
+    - name: TANGO_HOST
+      value: databaseds-{{ template "tango-base.name" . }}-{{ .Release.Name }}:10000
+  restartPolicy: Always
+{{- with .Values.nodeSelector }}
+  nodeSelector:
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- with .Values.affinity }}
+  affinity:
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- with .Values.tolerations }}
+  tolerations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupytango-{{ template "tango-base.name" . }}-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: jupytango-{{ template "tango-base.name" . }}-{{ .Release.Name }}
+    chart: {{ template "tango-base.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  ports:
+  - port: 8888
+    targetPort: 8888
+    protocol: TCP
+  selector:
+    app: jupytango-{{ template "tango-base.name" . }}-{{ .Release.Name }}
+    chart: {{ template "tango-base.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{ end }}

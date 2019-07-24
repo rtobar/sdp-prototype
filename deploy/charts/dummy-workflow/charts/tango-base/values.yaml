@@ -42,6 +42,14 @@ itango:
     tag: latest
     pullPolicy: IfNotPresent
 
+jupytango:
+  enabled: false
+  image:
+    registry: registry.gitlab.com/s2innovation/tangobox-docker
+    image: tangobox-jupytango
+    tag: latest
+    pullPolicy: IfNotPresent
+
 tangotest:
   enabled: true
   image:
