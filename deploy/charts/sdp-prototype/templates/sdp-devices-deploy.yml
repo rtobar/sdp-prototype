@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: sdp-devices-configuration-json-{{ .Release.Name }}
+  name: {{ include "sdp-prototype.fullname" . }}-sdp-devices
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "sdp-prototype.labels" . | indent 4 }}
@@ -23,19 +23,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sdp-prototype-devices-{{ .Release.Name }}
+      app: {{ include "sdp-prototype.fullname" . }}-sdp-devices
   template:
     metadata:
       labels:
-        app: sdp-prototype-devices-{{ .Release.Name }}
-        chart: {{ template "sdp-prototype.chart" . }}
-        release: {{ .Release.Name }}
-        heritage: {{ .Release.Service }}
+        app: {{ include "sdp-prototype.fullname" . }}-sdp-devices
+{{ include "sdp-prototype.labels" . | indent 8 }}
     spec:
       volumes:
         - name: configuration
           configMap:
-            name: sdp-devices-configuration-json-{{ .Release.Name }}
+            name: {{ include "sdp-prototype.fullname" . }}-sdp-devices
       initContainers:
         - name: dsconfig
           image: "{{ .Values.dsconfig.image.registry }}/{{ .Values.dsconfig.image.image }}:{{ .Values.dsconfig.image.tag }}"
@@ -60,9 +58,12 @@ spec:
         env:
         - name: TANGO_HOST
           value: databaseds-tango-base-{{ .Release.Name }}:10000
-        image: nexus.engageska-portugal.pt/sdp-prototype/tangods_sdp_master:latest
-        imagePullPolicy: Always
-        resources: {}
+        image: {{ .Values.tango.master.image }}:{{ .Values.tango.master.version }}
+        imagePullPolicy: {{ .Values.tango.master.imagePullPolicy }}
+        {{- with .Values.tango.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       - name: sdp-subarray
         env:
         - name: TANGO_HOST

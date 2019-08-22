@@ -9,13 +9,12 @@ spec:
   replicas: {{ .Values.workflow.testdeploy.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "sdp-prototype.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app: {{ include "sdp-prototype.fullname" . }}-workflow-testdeploy
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "sdp-prototype.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app: {{ include "sdp-prototype.fullname" . }}-workflow-testdeploy
+{{ include "sdp-prototype.labels" . | indent 8 }}
     spec:
       initContainers:
       {{ include "sdp-prototype.wait-for-etcd" . | nindent 6 }}

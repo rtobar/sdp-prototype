@@ -9,13 +9,12 @@ spec:
   replicas: {{ .Values.helm_deploy.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "sdp-prototype.name" . }}-helm
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app: {{ include "sdp-prototype.fullname" . }}-helm
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "sdp-prototype.name" . }}-helm
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app: {{ include "sdp-prototype.fullname" . }}-helm
+{{ include "sdp-prototype.labels" . | indent 8 }}
     spec:
       initContainers:
       {{ include "sdp-prototype.wait-for-etcd" . | nindent 6 }}
