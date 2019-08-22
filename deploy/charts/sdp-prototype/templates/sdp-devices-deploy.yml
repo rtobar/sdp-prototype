@@ -73,7 +73,9 @@ spec:
           value: "0"
         - name: SDP_CONFIG_HOST
           value: {{ include "sdp-prototype.etcd-host" . }}
-        image: nexus.engageska-portugal.pt/sdp-prototype/tangods_sdp_subarray:latest
-        imagePullPolicy: Always
-        resources: {}
-
+        image: {{ .Values.tango.subarray.image }}:{{ .Values.tango.subarray.version }}
+        imagePullPolicy: {{ .Values.tango.subarray.imagePullPolicy }}
+        {{- with .Values.tango.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
